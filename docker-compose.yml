@@ -1,0 +1,24 @@
+version: "3.3"
+services:
+  db_master:
+    image: mariadb:latest
+    environment:
+      MARIADB_ROOT_PASSWORD: qwer1234
+    volumes:
+      - ./backend/db/master/conf/master.cnf:/etc/mysql/conf.d/master.cnf:ro
+      - ./backend/db/master/data:/var/lib/mysql
+      - ./backend/db/master/master-init.sh:/docker-entrypoint-initdb.d/master-init.sh
+    ports:
+      - "3306:3306"
+  db_slave:
+    image: mariadb:latest
+    environment:
+      MARIADB_ROOT_PASSWORD: qwer1234
+    volumes:
+      - ./backend/db/slave/conf:/etc/mysql/conf.d
+      - ./backend/db/slave/data:/var/lib/mysql
+      - ./backend/db/slave/slave-init.sh:/docker-entrypoint-initdb.d/slave-init.sh
+    ports:
+      - "3307:3306"
+    depends_on:
+      - db_master
